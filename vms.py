@@ -1,4 +1,5 @@
 from subprocess import call
+import yaml
 import subprocess
 import kvm
 import os
@@ -23,8 +24,31 @@ print 'Instalando virsh...'
 call('sudo apt install -y libvirt-bin', shell=True)
 
 if n:
+    # yml de configuracion de mykvm
+    yml = [
+        {
+            'networks': [{'name': 'eno1', 'external': 'true', 'autostart': 'true', 'ip': '10.10.10.1'},
+                         {'name': 'local', 'external': 'true', 'autostart': 'true', 'ip': '192.168.10.1'}],
+        },
+        {
+            'vms':
+                [
+                    {
+                        'name': 'cdps',
+                        'vcpus': 2,
+                        'ram': 2048,
+                        'template': 'cdps-vm-base-p1.qcow2',
+                        'netdevs': [{'network': 'eno1', 'ip': '10.10.10.10'},
+                                    {'network': 'local', 'ip': '192.168.10.10'}]
+                    }
+                ]
+        }
+    ]
+    mykvm = open('/usr/local/share/mykvm/conf/mykvm.yml', 'w+')
+    mykvm.write(yaml.dump(yml))
+
     # Iniciamos la vm
-    call(['mykvm init', 'cdps-vm-base-p1.qcow2'], shell=True)
+    call('mykvm init', shell=True)
     call('mykvm up', shell=True)
 
     # Obtenemos el ID de la vm
@@ -61,7 +85,7 @@ for i in range(0, n):
     # Generamos el XML
     xml = '%s.xml' % vmName
     f = open('cdps-vm-base-p1.xml')
-    out = open('%s', xml)
+    out = open('%s' % xml, 'w+')
 
     for line in f:
         if '<name' in line:
