@@ -66,6 +66,10 @@ if n:
             newVmbuilder.write('--timezone Europe/Spain --ssh-user-key ~/.ssh/id_rsa.pub    \\\n')
         elif '--mirror' in line:
             vmbuilder.write('--mirror http://ftp.daum.net/ubuntu --addpkg=vim          \\\n')
+        elif '.qcow2' in line:
+            continue
+        elif 'mkdir' in line:
+            continue
         else:
             newVmbuilder.write(line)
 
