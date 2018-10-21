@@ -28,29 +28,26 @@ print 'virsh instalado.'
 if n:
     # yml de configuracion de mykvm
     print 'Configurando mykvm.yaml...'
-    yml = [
-        {
-            'networks': [{'name': 'eno1', 'external': 'true', 'autostart': 'true', 'ip': '10.10.10.1'},
-                         {'name': 'local', 'external': 'true', 'autostart': 'true', 'ip': '192.168.10.1'}],
-        },
-        {
-            'vms':
-                [
-                    {
-                        'name': 'cdps',
-                        'vcpus': 2,
-                        'ram': 2048,
-                        'template': 'cdps-vm-base-p1.qcow2',
-                        'netdevs': [{'network': 'eno1', 'ip': '10.10.10.10'},
-                                    {'network': 'local', 'ip': '192.168.10.10'}]
-                    }
-                ]
-        }
-    ]
+    yml = [{'networks': [{'name': 'eno1',
+                          'external': True,
+                          'autostart': True,
+                          'ip': '10.10.10.1'},
+                         {'name': 'local',
+                          'external': True,
+                          'autostart': True,
+                          'ip': '192.168.10.1'}]},
+           {'vms': [{'name': 'cdps',
+                     'vcpus': 2,
+                     'ram': 2048,
+                     'template': 'cdps-vm-base-p1.qcow2',
+                     'netdevs': [{'network': 'eno1', 'ip': '10.10.10.10'},
+                                 {'network': 'local', 'ip': '192.168.10.10'}]
+                     }]
+            }]
     call('mkdir /usr/local/share/mykvm', shell=True)
     call('mkdir /usr/local/share/mykvm/conf', shell=True)
     mykvm = open('/usr/local/share/mykvm/conf/mykvm.yml', 'w+')
-    mykvm.write(yaml.dump(yml))
+    mykvm.write(yaml.dump(yml, default_flow_style=False, allow_unicode=True))
     print 'YAML cargado.'
 
     # vmbuilder script
