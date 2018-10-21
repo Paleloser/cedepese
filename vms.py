@@ -3,6 +3,10 @@ import subprocess
 import kvm
 import os
 
+# REQUISITOS
+# PGMS: virsh, wget, bunzip, libvirt-bin, qemu-utils
+# MODULOS: kvm
+
 # Descargamos la imagen preparada:
 call('wget http://vnx.dit.upm.es/download/cdps/p1/cdps-vm-base-p1.img.bz2', shell=True)
 
@@ -14,12 +18,12 @@ print 'Imagen descomprimida.'
 # Generamos la base .qcow2, que servira de raiz a las vms
 print 'Generando imagen .qcow2...'
 call('qemu-img convert -O qcow2 cdps-vm-base-p1.img cdps-vm-base-p1.qcow2', shell=True)
-call('chmod 666 cdps-vm-base-p1.qcow2')
+call('chmod 666 cdps-vm-base-p1.qcow2', shell=True)
 print '.qcow2 generado.'
 
 # Creamos la vm
 call('virt-install --import --name cdps --memory 2048 --disk cdps-vm-base-p1.qcow2 --vcpus=2 --os-type linux \\'
-     '--network bridge=vibr0 --keymap es', shell=True)
+     '--network bridge=vibr0 --keymap es --connect qemu:///system', shell=True)
 
 # Obtenemos el ID de la vm
 print 'Obteniendo ID de la vm para dumpear su XML...'
