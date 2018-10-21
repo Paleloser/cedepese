@@ -56,19 +56,23 @@ if n:
     # vmbuilder script
     print 'Configurando vmbuilder.sh...'
     call('wget https://raw.githubusercontent.com/scottchoi/mykvm/master/script/vmbuilder.sh', shell=True)
-    vmbuilder = open('vmbuilder.sh')
+    vmbuilder = open('vmbuilder.sh', 'r')
+    newVmbuilder = open('vmbuilder2.sh', 'w+')
 
     for line in vmbuilder:
         if '--suite' in line:
-            vmbuilder.write('sudo vmbuilder kvm ubuntu --suite xenial --arch amd64 --flavour generic \\')
+            newVmbuilder.write('sudo vmbuilder kvm ubuntu --suite xenial --arch amd64 --flavour generic \\')
         elif '--timezone' in line:
-            vmbuilder.write('--timezone Europe/Spain --ssh-user-key ~/.ssh/id_rsa.pub    \\')
+            newVmbuilder.write('--timezone Europe/Spain --ssh-user-key ~/.ssh/id_rsa.pub    \\')
         # elif '--mirror' in line:
         #     vmbuilder.write('--mirror http://ftp.daum.net/ubuntu --addpkg=vim          \\')
         else:
-            vmbuilder.write(line)
+            newVmbuilder.write(line)
+
+    vmbuilder.close()
+    newVmbuilder.close()
     call('mkdir /usr/local/share/mykvm/script', shell=True)
-    call('mv vmbuilder.sh /usr/local/share/mykvm/script/vmbuilder.sh', shell=True)
+    call('mv vmbuilder2.sh /usr/local/share/mykvm/script/vmbuilder.sh', shell=True)
 
     # Iniciamos la vm
     print 'Iniciando mykvm...'
@@ -125,3 +129,6 @@ for i in range(0, n):
             out.write("<source file='%s' />" % pwd)
         else:
             out.write(line)
+
+    f.close()
+    out.close()
