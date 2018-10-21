@@ -27,7 +27,7 @@ print 'virsh instalado.'
 
 if n:
     # yml de configuracion de mykvm
-    print 'Configurando mykvm.yaml...'
+    print 'Configurando mykvm.yml...'
     yml = [{'networks': [{'name': 'eno1',
                           'external': True,
                           'autostart': True,
@@ -75,6 +75,7 @@ if n:
     newVmbuilder.close()
     call('mkdir /usr/local/share/mykvm/script', shell=True)
     call('mv vmbuilder2.sh /usr/local/share/mykvm/script/vmbuilder.sh', shell=True)
+    call('cp /usr/local/share/mykvm/script/vmbuilder.sh $HOME/.mykvm/script/vmbuilder.sh', shell=True)
 
     # Iniciamos la vm
     print 'Iniciando mykvm...'
