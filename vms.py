@@ -48,6 +48,7 @@ if n:
     call('mkdir /usr/local/share/mykvm/conf', shell=True)
     mykvm = open('/usr/local/share/mykvm/conf/mykvm.yml', 'w+')
     mykvm.write(yaml.dump(yml, default_flow_style=False, allow_unicode=True))
+    call('cp /usr/local/share/mykvm/conf/mykvm.yml mykvm.yml', shell=True)
     print 'YAML cargado.'
 
     # vmbuilder script
