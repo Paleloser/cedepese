@@ -15,18 +15,19 @@ print 'Imagen descomprimida.'
 # Generamos la base .qcow2, que servira de raiz a las vms
 print 'Generando imagen .qcow2...'
 call('qemu-img convert -O qcow2 cdps-vm-base-p1.img cdps-vm-base-p1.qcow2', shell=True)
+call('cp cdps-vm-base-p1.qcow2 ~/.mykvm/base/precise64.qcow2', shell=True)
 print '.qcow2 generado.'
 
 n = input('Cuantas VM se van a crear? ')
 
 # Instalamos (independientemente de que ya este instalado) virsh
 print 'Instalando virsh...'
-call('sudo apt install -y libvirt-bin', shell=True)
+call('apt install -y libvirt-bin', shell=True)
 print 'virsh instalado.'
 
 if n:
     # yml de configuracion de mykvm
-    print 'Configurando YAML de mykvm...'
+    print 'Configurando mykvm.yaml...'
     yml = [
         {
             'networks': [{'name': 'eno1', 'external': 'true', 'autostart': 'true', 'ip': '10.10.10.1'},
@@ -46,11 +47,28 @@ if n:
                 ]
         }
     ]
-    call('sudo mkdir /usr/local/share/mykvm', shell=True)
-    call('sudo mkdir /usr/local/share/mykvm/conf', shell=True)
+    call('mkdir /usr/local/share/mykvm', shell=True)
+    call('mkdir /usr/local/share/mykvm/conf', shell=True)
     mykvm = open('/usr/local/share/mykvm/conf/mykvm.yml', 'w+')
     mykvm.write(yaml.dump(yml))
     print 'YAML cargado.'
+
+    # vmbuilder script
+    print 'Configurando vmbuilder.sh...'
+    call('wget https://raw.githubusercontent.com/scottchoi/mykvm/master/script/vmbuilder.sh')
+    vmbuilder = open('vmbuilder.sh')
+
+    for line in vmbuilder:
+        if '--suite' in line:
+            vmbuilder.write('sudo vmbuilder kvm ubuntu --suite xenial --arch amd64 --flavour generic \\')
+        elif '--timezone' in line:
+            vmbuilder.write('--timezone Europe/Spain --ssh-user-key ~/.ssh/id_rsa.pub    \\')
+        # elif '--mirror' in line:
+        #     vmbuilder.write('--mirror http://ftp.daum.net/ubuntu --addpkg=vim          \\')
+        else:
+            vmbuilder.write(line)
+    call('mkdir /usr/local/share/mykvm/script')
+    call('mv vmbuilder.sh /usr/local/share/mykvm/script/vmbuilder.sh', shell=True)
 
     # Iniciamos la vm
     print 'Iniciando mykvm...'
@@ -60,12 +78,12 @@ if n:
 
     # Obtenemos el ID de la vm
     print 'Obteniendo ID de la vm para dumpear su XML...'
-    vmId = subprocess.check_output(["sudo virsh list", "--all", "|",
+    vmId = subprocess.check_output(["virsh list", "--all", "|",
                                     "grep", "'cdps'", "|",
                                     "awk", "'{ print $1 }'"])
 
     # Dumpeamos el XML de la vm
-    call('sudo virsh dumpxml %s > cdps-vm-base-p1.xml' % vmId, shell=True)
+    call('virsh dumpxml %s > cdps-vm-base-p1.xml' % vmId, shell=True)
 
     # Borramos todas las instancias kvm (necesario para crear vms a partir de la base)
     call('mykvm destroy', shell=True)
