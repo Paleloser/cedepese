@@ -24,11 +24,11 @@ call('sudo apt install -y libvirt-bin', shell=True)
 
 if n:
     # Iniciamos la vm
-    call('mykvm init cdps-vm-base-p1.qcow2', shell=True)
+    call(['mykvm init', 'cdps-vm-base-p1.qcow2'], shell=True)
     call('mykvm up', shell=True)
 
     # Obtenemos el ID de la vm
-    vmId = subprocess.check_output(["sudo", "virsh", "list", "--all", "|",
+    vmId = subprocess.check_output(["sudo virsh list", "--all", "|",
                                     "grep", "'cdps'", "|",
                                     "awk", "'{ print $1 }'"])
 
