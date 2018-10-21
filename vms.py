@@ -1,36 +1,33 @@
 from subprocess import call
-import yaml
 import subprocess
 import kvm
 import os
 
 # Descargamos la imagen preparada:
-# call('wget http://vnx.dit.upm.es/download/cdps/p1/cdps-vm-base-p1.img.bz2', shell=True)
-#
-# # La descomprimimos
-# print 'Descomprimiendo la imagen...'
-# call('bunzip2 cdps-vm-base-p1.img.bz2', shell=True)
-# print 'Imagen descomprimida.'
+call('wget http://vnx.dit.upm.es/download/cdps/p1/cdps-vm-base-p1.img.bz2', shell=True)
+
+# La descomprimimos
+print 'Descomprimiendo la imagen...'
+call('bunzip2 cdps-vm-base-p1.img.bz2', shell=True)
+print 'Imagen descomprimida.'
 
 # Generamos la base .qcow2, que servira de raiz a las vms
 print 'Generando imagen .qcow2...'
 call('qemu-img convert -O qcow2 cdps-vm-base-p1.img cdps-vm-base-p1.qcow2', shell=True)
+call('chmod 666 cdps-vm-base-p1.qcow2')
 print '.qcow2 generado.'
 
 # Creamos la vm
-call('virt-install --connect qemu:///system --name cdps --memory 2048 --import cdps-vm-base-p1.qcow2 \\'
-     '--vcpus=2 --os-type linux --network bridge=vibr0 --keymap es', shell=True)
+call('virt-install --import --name cdps --memory 2048 --disk cdps-vm-base-p1.qcow2 --vcpus=2 --os-type linux \\'
+     '--network bridge=vibr0 --keymap es', shell=True)
 
 # Obtenemos el ID de la vm
 print 'Obteniendo ID de la vm para dumpear su XML...'
 vmId = subprocess.check_output(["virsh list", "--all", "|", "grep", "'cdps'", "|", "awk", "'{ print $1 }'"])
+print 'ID: %s' % vmId
 
 # Dumpeamos el XML de la vm
 call('virsh dumpxml %s > cdps-vm-base-p1.xml' % vmId, shell=True)
-
-# Borramos todas las instancias kvm (necesario para crear vms a partir de la base)
-call('mykvm destroy', shell=True)
-print 'XML dumpeado. Maquina borrada.'
 
 n = input('Numero de maquinas a crear: ')
 
