@@ -55,7 +55,7 @@ if n:
 
     # vmbuilder script
     print 'Configurando vmbuilder.sh...'
-    call('wget https://raw.githubusercontent.com/scottchoi/mykvm/master/script/vmbuilder.sh')
+    call('wget https://raw.githubusercontent.com/scottchoi/mykvm/master/script/vmbuilder.sh', shell=True)
     vmbuilder = open('vmbuilder.sh')
 
     for line in vmbuilder:
@@ -67,7 +67,7 @@ if n:
         #     vmbuilder.write('--mirror http://ftp.daum.net/ubuntu --addpkg=vim          \\')
         else:
             vmbuilder.write(line)
-    call('mkdir /usr/local/share/mykvm/script')
+    call('mkdir /usr/local/share/mykvm/script', shell=True)
     call('mv vmbuilder.sh /usr/local/share/mykvm/script/vmbuilder.sh', shell=True)
 
     # Iniciamos la vm
