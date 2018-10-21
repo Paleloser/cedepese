@@ -22,9 +22,11 @@ n = input('Cuantas VM se van a crear? ')
 # Instalamos (independientemente de que ya este instalado) virsh
 print 'Instalando virsh...'
 call('sudo apt install -y libvirt-bin', shell=True)
+print 'virsh instalado.'
 
 if n:
     # yml de configuracion de mykvm
+    print 'Configurando YAML de mykvm...'
     yml = [
         {
             'networks': [{'name': 'eno1', 'external': 'true', 'autostart': 'true', 'ip': '10.10.10.1'},
@@ -44,14 +46,20 @@ if n:
                 ]
         }
     ]
+    call('sudo mkdir /usr/local/share/mykvm', shell=True)
+    call('sudo mkdir /usr/local/share/mykvm/conf', shell=True)
     mykvm = open('/usr/local/share/mykvm/conf/mykvm.yml', 'w+')
     mykvm.write(yaml.dump(yml))
+    print 'YAML cargado.'
 
     # Iniciamos la vm
+    print 'Iniciando mykvm...'
     call('mykvm init', shell=True)
     call('mykvm up', shell=True)
+    print 'mykvm iniciado y corriendo.'
 
     # Obtenemos el ID de la vm
+    print 'Obteniendo ID de la vm para dumpear su XML...'
     vmId = subprocess.check_output(["sudo virsh list", "--all", "|",
                                     "grep", "'cdps'", "|",
                                     "awk", "'{ print $1 }'"])
@@ -61,6 +69,7 @@ if n:
 
     # Borramos todas las instancias kvm (necesario para crear vms a partir de la base)
     call('mykvm destroy', shell=True)
+    print 'XML dumpeado. Maquina borrada.'
 
 # Generamos los XML y COW de cada vm
 for i in range(0, n):
