@@ -61,11 +61,11 @@ if n:
 
     for line in vmbuilder:
         if '--suite' in line:
-            newVmbuilder.write('sudo vmbuilder kvm ubuntu --suite xenial --arch amd64 --flavour generic \\')
+            newVmbuilder.write('sudo vmbuilder kvm ubuntu --suite xenial --arch amd64 --flavour generic \\\n')
         elif '--timezone' in line:
-            newVmbuilder.write('--timezone Europe/Spain --ssh-user-key ~/.ssh/id_rsa.pub    \\')
-        # elif '--mirror' in line:
-        #     vmbuilder.write('--mirror http://ftp.daum.net/ubuntu --addpkg=vim          \\')
+            newVmbuilder.write('--timezone Europe/Spain --ssh-user-key ~/.ssh/id_rsa.pub    \\\n')
+        elif '--mirror' in line:
+            vmbuilder.write('--mirror http://ftp.daum.net/ubuntu --addpkg=vim          \\\n')
         else:
             newVmbuilder.write(line)
 
