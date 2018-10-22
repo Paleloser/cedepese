@@ -8,17 +8,17 @@ import os
 # PGMS: wget, bunzip, libvirt-bin, qemu-utils, virtinst
 # MODULOS: kvm
 
-# # Descargamos la imagen preparada:
-# call('wget http://vnx.dit.upm.es/download/cdps/p1/cdps-vm-base-p1.img.bz2', shell=True)
-#
-# # La descomprimimos
-# print 'Descomprimiendo la imagen...'
-# call('bunzip2 cdps-vm-base-p1.img.bz2', shell=True)
-#
-# # Generamos la base .qcow2, que servira de raiz a las vms
-# print 'Generando imagen .qcow2...'
-# call('qemu-img convert -O qcow2 cdps-vm-base-p1.img cdps-vm-base-p1.qcow2', shell=True)
-# call('chmod 666 cdps-vm-base-p1.qcow2', shell=True)
+# Descargamos la imagen preparada:
+call('wget http://vnx.dit.upm.es/download/cdps/p1/cdps-vm-base-p1.img.bz2', shell=True)
+
+# La descomprimimos
+print 'Descomprimiendo la imagen...'
+call('bunzip2 cdps-vm-base-p1.img.bz2', shell=True)
+
+# Generamos la base .qcow2, que servira de raiz a las vms
+print 'Generando imagen .qcow2...'
+call('qemu-img convert -O qcow2 cdps-vm-base-p1.img cdps-vm-base-p1.qcow2', shell=True)
+call('chmod 666 cdps-vm-base-p1.qcow2', shell=True)
 
 # Creamos la vm
 print 'Instalando maquina virtual base...'
