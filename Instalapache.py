@@ -1,6 +1,16 @@
 import os
 import sys
 
+# Configuracion de la interfaz de red
+interfaces = open('/etc/network/interfaces', 'w')
+
+for line in interfaces:
+    if 'source /etc/network/interfaces.d/*.cfg' in line:
+        interfaces.write('auto eth0\n iface eth0 inet static\n address 192.168.122.241\n nermask 255.255.255.0\n'
+                         'gateway 192.168.122.1\n dns-nameservers 192.168.122.1')
+    else:
+        interfaces.write(line)
+
 #Instalacion de apache con todos sus extras para el correcto funcionamiento
 os.system("sudo apt-get install apache2")
 os.system("sudo apt-get install lynx")
@@ -13,8 +23,8 @@ os.system("sudo chmod 777 /etc/apache2/sites-available/dominio1.conf")
 f1 = open("/etc/apache2/sites-available/dominio1.conf", "w")
 for line in f1:
         if "DocumentRoot /var/www/dom1" in line:
-        		f1.write(line)
-                f1.write("ServerName dominio1.cdps\nServerAlias www.dominio1.cdps\n")
+            f1.write(line)
+            f1.write("ServerName dominio1.cdps\nServerAlias www.dominio1.cdps\n")
         else:
                 f1.write(line)
 f1.close()
